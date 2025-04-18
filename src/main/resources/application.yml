@@ -1,12 +1,27 @@
 server:
-  port: 8083
+  port: 8080
 spring:
   application:
     name: GATEWAY
   cloud:
     gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
       routes:
         - id: hospital-management-system
           uri: lb://hospital-management-system
           predicates:
             - Path=/api/**
+          filters:
+            - StripPrefix=1  # Remove if hospital-management-system expects /api
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+logging:
+  level:
+    org.springframework.cloud.loadbalancer: TRACE
+    org.springframework.cloud.loadbalancer.core.RoundRobinLoadBalancer: TRACE
+    org.springframework.cloud.gateway: TRACE
